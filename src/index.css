@@ -1,0 +1,75 @@
+/* ─── Base ─── */
+:root {
+  --dts-primary: #b30753;
+  --dts-primary-dark: #8f0441;
+  --dts-black: #111111;
+  --bs-success: #b30753;
+  --bs-success-rgb: 179, 7, 83;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--dts-black);
+}
+
+.hero-surface {
+  background: linear-gradient(125deg, var(--dts-black), var(--dts-primary));
+}
+
+/* ─── Arabic Text ─── */
+.arabic-text {
+  font-family: 'Traditional Arabic', 'Scheherazade New', serif;
+  direction: rtl;
+}
+
+/* ─── Navbar Active Link ─── */
+.navbar .nav-link.active {
+  font-weight: 600;
+  color: #fff !important;
+  border-bottom: 2px solid #fff;
+}
+
+/* ─── Card Hover ─── */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* ─── Buttons ─── */
+.btn-success {
+  background-color: var(--dts-primary);
+  border-color: var(--dts-primary);
+}
+.btn-success:hover {
+  background-color: var(--dts-primary-dark);
+  border-color: var(--dts-primary-dark);
+}
+
+/* ─── Form Focus ─── */
+.form-control:focus {
+  border-color: var(--dts-primary);
+  box-shadow: 0 0 0 0.2rem rgba(179, 7, 83, 0.2);
+}
+
+.text-success,
+.btn-outline-success,
+.border-success,
+.bg-success {
+  --bs-success: var(--dts-primary);
+  --bs-success-rgb: 179, 7, 83;
+}
+
+/* ─── Spinner Animation ─── */
+@keyframes fa-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.fa-spin {
+  animation: fa-spin 1s linear infinite;
+}
