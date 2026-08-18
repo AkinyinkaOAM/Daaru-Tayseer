@@ -24,23 +24,34 @@ export default function Home() {
     <>
       {/* ───── HERO ───── */}
       <section className="hero-surface text-white py-5">
-        <div className="container text-center py-4">
-          <h1 className="display-4 fw-bold arabic-text" style={{ direction: 'rtl' }}>
-            دار تيسير الدراسات العربية والثقافة الإسلامية
-          </h1>
-          <p className="fs-5 mt-3 opacity-90">
-            ARABIC SCHOOL OF EASY LEARNING AND ISLAMIC CIVILIZATION
-          </p>
-          <p className="lead mt-2 text-white-75">
-            Boluwaji, Ibadan, Oyo State, Nigeria
-          </p>
-          <div className="mt-4 d-flex gap-3 justify-content-center flex-wrap">
-            <Link to="/contact" className="btn btn-light btn-lg rounded-pill px-4">
-              Contact Us
-            </Link>
-            <Link to="/programme" className="btn btn-outline-light btn-lg rounded-pill px-4">
-              Our Programmes
-            </Link>
+        <div className="container py-4">
+          <div className="row align-items-center g-4">
+            <div className="col-lg-8 text-center text-lg-start">
+              <h1 className="display-4 fw-bold arabic-text" style={{ direction: 'rtl' }}>
+                دار تيسير الدراسات العربية والثقافة الإسلامية
+              </h1>
+              <p className="fs-5 mt-3 opacity-90">
+                ARABIC SCHOOL OF EASY LEARNING AND ISLAMIC CIVILIZATION
+              </p>
+              <p className="lead mt-2 text-white-75">
+                Boluwaji, Ibadan, Oyo State, Nigeria
+              </p>
+              <div className="mt-4 d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                <Link to="/contact" className="btn btn-light btn-lg rounded-pill px-4">
+                  Contact Us
+                </Link>
+                <Link to="/programme" className="btn btn-outline-light btn-lg rounded-pill px-4">
+                  Our Programmes
+                </Link>
+              </div>
+            </div>
+            <div className="col-lg-4 text-center">
+              <img
+                src="/DTS%20logo.png"
+                alt="Daaru Tayseer school logo"
+                className="hero-logo"
+              />
+            </div>
           </div>
         </div>
       </section>

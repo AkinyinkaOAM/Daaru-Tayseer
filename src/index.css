@@ -19,6 +19,18 @@ body {
   background: linear-gradient(125deg, var(--dts-black), var(--dts-primary));
 }
 
+.hero-logo {
+  width: min(100%, 240px);
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 991.98px) {
+  .hero-logo {
+    width: min(58vw, 220px);
+  }
+}
+
 /* ─── Arabic Text ─── */
 .arabic-text {
   font-family: 'Traditional Arabic', 'Scheherazade New', serif;
