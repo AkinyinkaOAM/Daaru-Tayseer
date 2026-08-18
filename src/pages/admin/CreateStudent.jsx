@@ -4,10 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import api, { studentsAPI } from '../../services/api';
 import { FaCheckCircle } from 'react-icons/fa';
 
-const SESSIONS = [
-  '2023/2024', '2024/2025', '2025/2026', '2026/2027', '2027/2028',
-];
-
 const CLASSES = [
   'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
   'JSS 1', 'JSS 2', 'JSS 3',

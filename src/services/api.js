@@ -40,6 +40,7 @@ export default api;
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
+  updatePassword: (data) => api.put('/auth/update-password', data),
 };
 
 /* ─── Students ─── */
@@ -48,7 +49,7 @@ export const studentsAPI = {
   getById: (id) => api.get(`/students/${id}`),
   create: (data) => api.post('/students', data),
   update: (id, data) => api.put(`/students/${id}`, data),
-  delete: (id) => api.delete(`/students/${id}`),
+  delete: (id, password) => api.delete(`/students/${id}`, { data: { password } }),
 };
 
 /* ─── Scores ─── */
@@ -142,8 +143,9 @@ export const downloadsAPI = {
 export const adminAPI = {
   getAll: (params) => api.get('/users', { params }),
   create: (data) => api.post('/users', data),
+  resendInvitation: (id) => api.post(`/users/${id}/resend-invitation`),
   update: (id, data) => api.put(`/users/${id}`, data),
   updateRole: (id, role) => api.put(`/users/${id}`, { role }),
-  delete: (id) => api.delete(`/users/${id}`),
+  delete: (id, password) => api.delete(`/users/${id}`, { data: { password } }),
 };
 

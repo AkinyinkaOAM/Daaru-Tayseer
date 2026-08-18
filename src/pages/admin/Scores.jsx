@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { studentsAPI, scoresAPI } from '../../services/api';
 import { FaSearch, FaCheckCircle, FaSpinner } from 'react-icons/fa';
 
@@ -24,17 +24,17 @@ export default function Scores() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
 
-  const selectedTerm = watch('term');
-  const selectedSession = watch('session');
+  const selectedTerm = useWatch({ control, name: 'term' });
+  const selectedSession = useWatch({ control, name: 'session' });
 
   // Load students for search
   useEffect(() => {
     if (searchTerm.length < 2) {
-      setStudents([]);
-      return;
+      return undefined;
     }
+
     const timer = setTimeout(async () => {
       try {
         const { data } = await studentsAPI.getAll({ search: searchTerm, limit: 10 });
@@ -43,6 +43,7 @@ export default function Scores() {
         setStudents([]);
       }
     }, 300);
+
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
@@ -123,7 +124,10 @@ export default function Scores() {
               className="form-control ps-5"
               placeholder="Type student name (min 2 chars)..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setStudents([]);
+              }}
             />
           </div>
           {students.length > 0 && (

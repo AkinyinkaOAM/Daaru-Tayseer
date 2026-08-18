@@ -17,6 +17,7 @@ import Programme from './pages/Programme'
 import Gallery from './pages/Gallery'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
+import ChangePassword from './pages/ChangePassword'
 import ParentPortal from './pages/ParentPortal'
 import Dashboard from './pages/admin/Dashboard'
 import CreateStudent from './pages/admin/CreateStudent'
@@ -58,6 +59,10 @@ function App() {
       </Route>
 
       {/* Protected admin routes */}
+      <Route element={<PrivateRoute />}>
+        <Route path="/change-password" element={<ChangePassword />} />
+      </Route>
+
       <Route element={<PrivateRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />

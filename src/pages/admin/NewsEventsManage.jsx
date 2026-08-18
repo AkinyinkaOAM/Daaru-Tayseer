@@ -7,7 +7,7 @@ export default function NewsEventsManage() {
   const [loading, setLoading] = useState(true);
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
 
-  const loadItems = async () => {
+  const refreshItems = async () => {
     setLoading(true);
     try {
       const { data } = await newsEventsAPI.getAdmin({ limit: 100 });
@@ -20,7 +20,25 @@ export default function NewsEventsManage() {
   };
 
   useEffect(() => {
+    let isActive = true;
+
+    const loadItems = async () => {
+      setLoading(true);
+      try {
+        const { data } = await newsEventsAPI.getAdmin({ limit: 100 });
+        if (isActive) setItems(data.data || []);
+      } catch {
+        if (isActive) setItems([]);
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
     loadItems();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const onSubmit = async (formData) => {
@@ -30,7 +48,7 @@ export default function NewsEventsManage() {
         isPublished: formData.isPublished === 'true',
       });
       reset();
-      loadItems();
+      await refreshItems();
     } catch {
       alert('Failed to create update');
     }
@@ -39,7 +57,7 @@ export default function NewsEventsManage() {
   const togglePublish = async (item) => {
     try {
       await newsEventsAPI.update(item._id, { isPublished: !item.isPublished });
-      loadItems();
+      await refreshItems();
     } catch {
       alert('Failed to update publish status');
     }
@@ -49,7 +67,7 @@ export default function NewsEventsManage() {
     if (!window.confirm('Delete this update?')) return;
     try {
       await newsEventsAPI.delete(id);
-      loadItems();
+      await refreshItems();
     } catch {
       alert('Failed to delete update');
     }

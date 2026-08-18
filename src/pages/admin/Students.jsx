@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { studentsAPI } from '../../services/api';
+import { useAuth } from '../../context/useAuth';
 import { FaSearch, FaTrash, FaSpinner } from 'react-icons/fa';
 
 export default function Students() {
+  const { user } = useAuth();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -11,7 +13,10 @@ export default function Students() {
   const [total, setTotal] = useState(0);
   const limit = 20;
 
-  const fetchStudents = useCallback(async () => {
+  const refreshStudents = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
     setLoading(true);
     try {
       const { data } = await studentsAPI.getAll({ search, page, limit });
@@ -22,22 +27,45 @@ export default function Students() {
     } finally {
       setLoading(false);
     }
-  }, [search, page]);
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchStudents();
-    }
-  }, [fetchStudents]);
+    let isActive = true;
+
+    const loadStudents = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      setLoading(true);
+      try {
+        const { data } = await studentsAPI.getAll({ search, page, limit });
+        if (isActive) {
+          setStudents(data.data || []);
+          setTotal(data.pagination?.total || 0);
+        }
+      } catch {
+        if (isActive) setStudents([]);
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
+    loadStudents();
+
+    return () => {
+      isActive = false;
+    };
+  }, [search, page]);
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Delete student "${name}"? This cannot be undone.`)) return;
+    const password = window.prompt('Enter your password to confirm this deletion:');
+    if (!password) return;
     try {
-      await studentsAPI.delete(id);
-      fetchStudents();
-    } catch {
-      alert('Failed to delete student');
+      await studentsAPI.delete(id, password);
+      await refreshStudents();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to delete student');
     }
   };
 
@@ -98,13 +126,13 @@ export default function Students() {
                     <td>{s.admissionNumber || '—'}</td>
                     <td>{s.parentName || '—'}</td>
                     <td className="text-center">
-                      <button
-                        className="btn btn-sm btn-outline-danger me-1"
-                        title="Delete"
-                        onClick={() => handleDelete(s._id, s.firstName && s.lastName ? `${s.firstName} ${s.lastName}` : s.name)}
-                      >
-                        <FaTrash size={12} />
-                      </button>
+                      {user?.role === 'super_super_admin' && <button
+                          className="btn btn-sm btn-outline-danger me-1"
+                          title="Delete"
+                          onClick={() => handleDelete(s._id, s.firstName && s.lastName ? `${s.firstName} ${s.lastName}` : s.name)}
+                        >
+                          <FaTrash size={12} />
+                        </button>}
                       <span className="text-muted small">(edit via backend)</span>
                     </td>
                   </tr>

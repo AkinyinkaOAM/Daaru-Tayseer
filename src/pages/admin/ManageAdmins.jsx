@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { adminAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
-import { FaUserShield, FaTrash, FaCheckCircle } from 'react-icons/fa';
+import { useAuth } from '../../context/useAuth';
+import { FaUserShield, FaTrash, FaCheckCircle, FaEnvelope } from 'react-icons/fa';
 
 const ROLES = [
   { value: 'admin', label: 'Admin / Teacher' },
@@ -30,10 +30,28 @@ export default function ManageAdmins() {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     const token = localStorage.getItem('token');
-    if (token) {
-      fetchAdmins();
-    }
+    if (!token) return undefined;
+
+    const loadAdmins = async () => {
+      setLoading(true);
+      try {
+        const { data } = await adminAPI.getAll();
+        if (isMounted) setAdmins(data.data || []);
+      } catch {
+        if (isMounted) setAdmins([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadAdmins();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const onSubmit = async (formData) => {
@@ -49,12 +67,14 @@ export default function ManageAdmins() {
   };
 
   const handleDelete = async (id, email) => {
-    if (!window.confirm(`Remove admin "${email}"?`)) return;
+    if (!window.confirm(`Permanently delete admin "${email}"? This cannot be undone.`)) return;
+    const password = window.prompt('Enter your password to confirm this deletion:');
+    if (!password) return;
     try {
-      await adminAPI.delete(id);
+      await adminAPI.delete(id, password);
       fetchAdmins();
-    } catch {
-      alert('Failed to delete admin');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to delete admin');
     }
   };
 
@@ -64,6 +84,17 @@ export default function ManageAdmins() {
       fetchAdmins();
     } catch {
       alert('Failed to update role');
+    }
+  };
+
+  const handleResendInvitation = async (id, email) => {
+    if (!window.confirm(`Send a new temporary password to "${email}"?`)) return;
+    try {
+      await adminAPI.resendInvitation(id);
+      setSuccess(`A new temporary password was sent to ${email}.`);
+      setTimeout(() => setSuccess(''), 4000);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to resend invitation');
     }
   };
 
@@ -93,6 +124,14 @@ export default function ManageAdmins() {
             <div className="row g-2">
               <div className="col-md-4">
                 <input
+                  {...register('name', { required: 'Name is required' })}
+                  className={`form-control form-control-sm ${errors.name ? 'is-invalid' : ''}`}
+                  placeholder="Full name"
+                />
+                {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
+              </div>
+              <div className="col-md-4">
+                <input
                   {...register('email', { required: 'Email is required' })}
                   className={`form-control form-control-sm ${errors.email ? 'is-invalid' : ''}`}
                   placeholder="Email"
@@ -100,16 +139,7 @@ export default function ManageAdmins() {
                 />
                 {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
               </div>
-              <div className="col-md-3">
-                <input
-                  {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 chars' } })}
-                  className={`form-control form-control-sm ${errors.password ? 'is-invalid' : ''}`}
-                  placeholder="Password"
-                  type="password"
-                />
-                {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
-              </div>
-              <div className="col-md-3">
+              <div className="col-md-6">
                 <select
                   {...register('role', { required: 'Role is required' })}
                   className={`form-select form-select-sm ${errors.role ? 'is-invalid' : ''}`}
@@ -184,14 +214,11 @@ export default function ManageAdmins() {
                         {a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '—'}
                       </td>
                       <td className="text-center">
-                        {a._id !== user?._id && (
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(a._id, a.email)}
-                            title="Delete admin"
-                          >
-                            <FaTrash size={12} />
-                          </button>
+                        {canManageRoles && (a.id || a._id) !== user?.id && (a.id || a._id) !== user?._id && (
+                          <>
+                            <button className="btn btn-sm btn-outline-primary me-1" onClick={() => handleResendInvitation(a.id || a._id, a.email)} title="Resend invitation"><FaEnvelope size={12} /></button>
+                            <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(a.id || a._id, a.email)} title="Delete admin"><FaTrash size={12} /></button>
+                          </>
                         )}
                       </td>
                     </tr>

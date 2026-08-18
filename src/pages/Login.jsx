@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function Login() {
   const { login } = useAuth();
@@ -17,6 +17,10 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(email.trim(), password);
+      if (user?.mustChangePassword) {
+        navigate('/change-password', { replace: true });
+        return;
+      }
       if (user?.role === 'student') {
         navigate('/student/portal');
       } else if (user?.role === 'parent') {
@@ -25,7 +29,16 @@ export default function Login() {
         navigate('/admin/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      if (!err.response) {
+        setError('Unable to reach the server. Please make sure the backend is running and try again.');
+      } else {
+        const validationError = err.response.data?.errors?.[0];
+        setError(
+          validationError
+            ? `${validationError.field}: ${validationError.message}`
+            : err.response.data?.message || 'Invalid email or password'
+        );
+      }
     } finally {
       setLoading(false);
     }

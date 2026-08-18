@@ -17,9 +17,11 @@ export default function ContactMessages() {
     }
   };
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     loadMessages();
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const resolveMessage = async (id) => {
     try {

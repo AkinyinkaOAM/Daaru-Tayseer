@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { auditLogsAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 export default function AuditLogs() {
   const { isSuperAdmin, loading: authLoading } = useAuth();
@@ -19,10 +19,12 @@ export default function AuditLogs() {
     }
   };
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!isSuperAdmin) return;
     loadLogs();
   }, [isSuperAdmin]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   if (authLoading) return <p className="text-muted">Checking access...</p>;
   if (!isSuperAdmin) return <p className="text-danger">You do not have permission to access this page.</p>;

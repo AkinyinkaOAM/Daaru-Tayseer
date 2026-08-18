@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { portalAPI } from '../services/api';
 import { useForm } from 'react-hook-form';
 import { FaBook, FaClipboardList, FaSchool, FaUserGraduate } from 'react-icons/fa';
@@ -30,7 +30,7 @@ export default function StudentPortal() {
     };
 
     load();
-  }, []);
+  }, [reset]);
 
   if (loading) {
     return <div className="container py-5 text-center">Loading portal...</div>;

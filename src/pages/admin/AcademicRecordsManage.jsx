@@ -27,9 +27,11 @@ export default function AcademicRecordsManage() {
     }
   };
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     loadData();
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const onSubmit = async (formData) => {
     try {

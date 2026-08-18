@@ -20,9 +20,11 @@ export default function DownloadsManage() {
     }
   };
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     loadDownloads();
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const onSubmit = async (formData) => {
     try {

@@ -19,9 +19,11 @@ export default function AdmissionsManage() {
     }
   };
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     loadApplications();
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleStatus = async (id, status) => {
     try {
