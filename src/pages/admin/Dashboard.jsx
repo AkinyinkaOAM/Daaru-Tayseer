@@ -1,21 +1,31 @@
 import { useState, useEffect } from 'react';
-import { studentsAPI } from '../../services/api';
+import { Link } from 'react-router-dom';
+import { studentsAPI, adminAPI, settingsAPI } from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 import { FaUserGraduate, FaChalkboardTeacher, FaStar, FaSchool } from 'react-icons/fa';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ students: 0, teachers: 0, classes: 0 });
+  const [stats, setStats] = useState({ students: 0, teachers: 0, classes: 0, term: '', session: '' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await studentsAPI.getAll({ limit: 1 });
+        const [studentsRes, teachersRes, settingsRes] = await Promise.allSettled([
+          studentsAPI.getAll({ limit: 1 }),
+          adminAPI.getAll({ role: 'admin', limit: 1 }),
+          settingsAPI.get(),
+        ]);
+
+        const teachersTotal = teachersRes.value?.data?.pagination?.total || 0;
         setStats({
-          students: data.pagination?.total || 0,
-          teachers: 0,
-          classes: 0,
+          students: studentsRes.value?.data?.pagination?.total || 0,
+          // Classes mirrors teachers: each class has exactly one teacher assigned.
+          teachers: teachersTotal,
+          classes: teachersTotal,
+          term: settingsRes.value?.data?.data?.settings?.currentTerm || '',
+          session: settingsRes.value?.data?.data?.settings?.currentSession || '',
         });
       } catch {
         // Backend not connected — show placeholder
@@ -27,10 +37,10 @@ export default function Dashboard() {
   }, []);
 
   const cards = [
-    { label: 'Total Students', value: stats.students, icon: <FaUserGraduate size={28} />, color: 'bg-primary' },
-    { label: 'Teachers', value: stats.teachers, icon: <FaChalkboardTeacher size={28} />, color: 'bg-success' },
-    { label: 'Classes', value: stats.classes, icon: <FaSchool size={28} />, color: 'bg-warning' },
-    { label: 'Terms / Year', value: 3, icon: <FaStar size={28} />, color: 'bg-info' },
+    { label: 'Total Students', value: stats.students, icon: <FaUserGraduate size={28} />, color: 'bg-primary', link: '/admin/students' },
+    { label: 'Teachers', value: stats.teachers, icon: <FaChalkboardTeacher size={28} />, color: 'bg-success', link: '/admin/teachers' },
+    { label: 'Classes', value: stats.classes, icon: <FaSchool size={28} />, color: 'bg-warning', link: '/admin/classes' },
+    { label: 'Term / Year', value: stats.term ? `${stats.term} · ${stats.session}` : '—', icon: <FaStar size={28} />, color: 'bg-info', link: '/admin/term-settings' },
   ];
 
   return (
@@ -50,15 +60,15 @@ export default function Dashboard() {
         <div className="row g-3 mb-4">
           {cards.map((card, i) => (
             <div className="col-md-3 col-sm-6" key={i}>
-              <div className={`card border-0 text-white ${card.color} shadow-sm`}>
+              <Link to={card.link} className={`card border-0 text-white ${card.color} shadow-sm text-decoration-none`}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div>
                     <h2 className="fw-bold mb-0">{card.value}</h2>
-                    <p className="small opacity-75 mb-0">{card.label}</p>
+                    <p className="small opacity-75 mb-0 text-white">{card.label}</p>
                   </div>
                   <div className="opacity-50">{card.icon}</div>
                 </div>
-              </div>
+              </Link>
             </div>
           ))}
         </div>

@@ -1,0 +1,54 @@
+.broadsheet-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.broadsheet-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.broadsheet-table th,
+.broadsheet-table td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.broadsheet-table .sticky-col {
+  position: sticky;
+  z-index: 2;
+}
+
+.broadsheet-table thead .sticky-col {
+  z-index: 3;
+  background-color: #d1e7dd;
+}
+
+.broadsheet-table tbody .sticky-col {
+  background-color: #fff;
+}
+
+.broadsheet-table .sticky-sn {
+  left: 0;
+  width: 50px;
+  min-width: 50px;
+}
+
+.broadsheet-table .sticky-name {
+  left: 50px;
+  width: 180px;
+  min-width: 180px;
+  white-space: normal;
+}
+
+.broadsheet-input {
+  width: 58px;
+  padding: 0.15rem 0.3rem;
+  text-align: center;
+}
+
+@media print {
+  .broadsheet-table .sticky-col {
+    position: static;
+  }
+}

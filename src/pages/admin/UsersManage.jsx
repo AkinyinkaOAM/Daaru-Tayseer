@@ -4,7 +4,7 @@ import { adminAPI } from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 
 const ROLES = [
-  { value: 'admin', label: 'Teacher/Admin' },
+  { value: 'admin', label: 'Teacher' },
   { value: 'parent', label: 'Parent' },
   { value: 'student', label: 'Student' },
   { value: 'super_admin', label: 'Super Admin' },

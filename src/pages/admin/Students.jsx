@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { studentsAPI } from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 import { FaSearch, FaTrash, FaSpinner } from 'react-icons/fa';
 
 export default function Students() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -119,13 +120,18 @@ export default function Students() {
               </thead>
               <tbody>
                 {students.map((s, i) => (
-                  <tr key={s._id}>
+                  <tr
+                    key={s._id}
+                    role="button"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/admin/students/${s._id}`)}
+                  >
                     <td className="text-muted">{(page - 1) * limit + i + 1}</td>
                     <td className="fw-medium">{s.firstName && s.lastName ? `${s.firstName} ${s.lastName}` : s.name || '—'}</td>
                     <td>{s.grade || s.studentClass || '—'}</td>
                     <td>{s.admissionNumber || '—'}</td>
                     <td>{s.parentName || '—'}</td>
-                    <td className="text-center">
+                    <td className="text-center" onClick={(e) => e.stopPropagation()}>
                       {user?.role === 'super_super_admin' && <button
                           className="btn btn-sm btn-outline-danger me-1"
                           title="Delete"
@@ -133,7 +139,7 @@ export default function Students() {
                         >
                           <FaTrash size={12} />
                         </button>}
-                      <span className="text-muted small">(edit via backend)</span>
+                      <Link to={`/admin/students/${s._id}`} className="btn btn-sm btn-outline-success">View</Link>
                     </td>
                   </tr>
                 ))}

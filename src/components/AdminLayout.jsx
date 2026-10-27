@@ -3,22 +3,25 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import {
   FaTachometerAlt, FaUserGraduate, FaPlusCircle,
-  FaStar, FaUsersCog, FaSignOutAlt, FaBars, FaTimes, FaRegNewspaper, FaDownload, FaEnvelopeOpenText, FaTasks, FaMoneyBillWave, FaTable, FaHistory,
+  FaStar, FaUsersCog, FaSignOutAlt, FaBars, FaTimes, FaRegNewspaper, FaDownload, FaEnvelopeOpenText, FaTasks, FaMoneyBillWave, FaTable, FaHistory, FaChalkboardTeacher, FaSchool,
 } from 'react-icons/fa';
 
 const SIDEBAR_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: <FaTachometerAlt />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'Create Student', path: '/admin/students/create', icon: <FaPlusCircle />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'All Students', path: '/admin/students', icon: <FaUserGraduate />, roles: ['admin', 'super_admin', 'super_super_admin'] },
-  { label: 'Upload Scores', path: '/admin/scores', icon: <FaStar />, roles: ['admin', 'super_admin', 'super_super_admin'] },
+  { label: 'Manage Teachers', path: '/admin/teachers', icon: <FaChalkboardTeacher />, roles: ['admin', 'super_admin', 'super_super_admin'] },
+  { label: 'Classes', path: '/admin/classes', icon: <FaSchool />, roles: ['admin', 'super_admin', 'super_super_admin'] },
+  { label: 'Term / Year', path: '/admin/term-settings', icon: <FaStar />, roles: ['admin', 'super_admin', 'super_super_admin'] },
+  { label: 'Upload Scores', path: '/admin/scores', icon: <FaStar />, roles: ['admin'] },
   { label: 'Admissions', path: '/admin/admissions', icon: <FaUserGraduate />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'News & Events', path: '/admin/news-events', icon: <FaRegNewspaper />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'Downloads', path: '/admin/downloads', icon: <FaDownload />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'Academic Records', path: '/admin/academic-records', icon: <FaTasks />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'Payments', path: '/admin/payments', icon: <FaMoneyBillWave />, roles: ['admin', 'super_admin', 'super_super_admin'] },
   { label: 'Broadsheet', path: '/admin/broadsheet', icon: <FaTable />, roles: ['admin', 'super_admin', 'super_super_admin'] },
-  { label: 'Contact Messages', path: '/admin/contact-messages', icon: <FaEnvelopeOpenText />, roles: ['admin', 'super_admin', 'super_super_admin'] },
-  { label: 'Users', path: '/admin/users', icon: <FaUsersCog />, roles: ['super_admin', 'super_super_admin'] },
+  { label: 'Report Cards', path: '/admin/report-cards', icon: <FaTable />, roles: ['admin', 'super_admin', 'super_super_admin'] },
+  { label: 'Contact Messages', path: '/admin/contact-messages', icon: <FaEnvelopeOpenText />, roles: ['admin', 'super_admin', 'super_super_admin'] },  { label: 'Users', path: '/admin/users', icon: <FaUsersCog />, roles: ['super_admin', 'super_super_admin'] },
   { label: 'Audit Logs', path: '/admin/audit-logs', icon: <FaHistory />, roles: ['super_admin', 'super_super_admin'] },
   { label: 'Manage Admins', path: '/admin/admins', icon: <FaUsersCog />, roles: ['super_admin', 'super_super_admin'] },
 ];

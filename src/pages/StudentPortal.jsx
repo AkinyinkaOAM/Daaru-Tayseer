@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/useAuth';
 import { portalAPI } from '../services/api';
 import { useForm } from 'react-hook-form';
+import ReportSheet from "../components/ReportSheet";
 import { FaBook, FaClipboardList, FaSchool, FaUserGraduate } from 'react-icons/fa';
+
+const SESSIONS = ['2024/2025', '2025/2026', '2026/2027'];
+const TERMS = ['First Term', 'Second Term', 'Third Term'];
 
 export default function StudentPortal() {
   const { user, logout } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [session, setSession] = useState(SESSIONS[SESSIONS.length - 1]);
+  const [term, setTerm] = useState(TERMS[0]);
   const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
@@ -231,6 +237,28 @@ export default function StudentPortal() {
           <div className="card border-0 shadow-sm h-100"><div className="card-body"><h6 className="fw-bold">Class Activities</h6><p className="text-muted mb-0">{activities.length} activities</p></div></div>
         </div>
       </div>
+
+      <div className="card border-0 shadow-sm mt-4">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h5 className="fw-bold mb-0">My Report Sheet</h5>
+            <div className="d-flex gap-2">
+              <select className="form-select form-select-sm" value={session} onChange={(e) => setSession(e.target.value)}>
+                {SESSIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <select className="form-select form-select-sm" value={term} onChange={(e) => setTerm(e.target.value)}>
+                {TERMS.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+          {student ? (
+            <ReportSheet student={student} courses={courses} session={session} term={term} editable={false} />
+          ) : (
+            <p className="text-muted mb-0">Student profile not found.</p>
+          )}
+        </div>
+      </div>
+
       <p className="small text-muted mt-4 mb-0">Powered by: Dev-OAMs</p>
     </div>
   );

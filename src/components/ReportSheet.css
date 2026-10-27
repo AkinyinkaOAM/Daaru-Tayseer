@@ -1,0 +1,435 @@
+.report-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  margin: 25px auto;
+  background: #fff;
+  border: 1px solid #d5e5d6;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  font-family: Arial, Helvetica, sans-serif;
+  color: #15351d;
+}
+
+.report-header {
+  display: grid;
+  grid-template-columns: 90px 1fr 110px;
+  align-items: center;
+  gap: 15px;
+  background: #11601c;
+  color: #fff;
+  padding: 12px 15px;
+  border-bottom: 4px solid #d7bd35;
+}
+
+.school-logo-box img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.school-information {
+  text-align: center;
+}
+
+.school-information h1 {
+  font-size: 15px;
+  margin: 4px 0;
+  font-weight: 700;
+}
+
+.school-information p {
+  margin: 3px 0;
+  font-size: 11px;
+}
+
+.school-information small {
+  font-size: 9px;
+}
+
+.arabic-school-name {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.term-badge {
+  background: #f5d34d;
+  color: #173a1c;
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.term-badge strong,
+.term-badge span {
+  display: block;
+}
+
+.term-badge span {
+  margin-top: 3px;
+  font-weight: bold;
+}
+
+.report-title {
+  background: #0d5817;
+  color: #fff;
+  padding: 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.student-information-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 7px;
+  background: #f4faf3;
+}
+
+.student-info {
+  min-height: 38px;
+  border: 1px solid #c9dfca;
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: #fff;
+}
+
+.student-info span {
+  display: block;
+  font-size: 8px;
+  color: #657d68;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.student-info strong {
+  display: block;
+  font-size: 11px;
+}
+
+.student-info input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  font-size: 11px;
+  color: #173a1c;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 7px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10px;
+}
+
+.report-table th {
+  background: #0d5817;
+  color: white;
+  border: 1px solid #164b1c;
+  padding: 7px 4px;
+  text-align: center;
+}
+
+.report-table td {
+  border: 1px solid #c8dfc9;
+  padding: 5px 4px;
+  text-align: center;
+  height: 27px;
+}
+
+.report-table th:first-child,
+.report-table td:first-child {
+  width: 35px;
+}
+
+.subject-column {
+  width: 39%;
+}
+
+.subject-name {
+  text-align: left !important;
+  font-weight: 500;
+}
+
+.score-input {
+  width: 55px;
+  max-width: 100%;
+  border: 1px solid #b9d4bb;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.total-cell {
+  font-weight: 700;
+  color: #0d5817;
+}
+
+.grade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 3px 6px;
+  border-radius: 12px;
+  border: 1px solid #9bc89f;
+  font-weight: bold;
+  font-size: 9px;
+}
+
+.grade-A {
+  background: #d9f4dc;
+  color: #0c5e17;
+}
+
+.grade-B {
+  background: #e2f4e4;
+  color: #22632b;
+}
+
+.grade-C {
+  background: #fff4c5;
+  color: #735c00;
+}
+
+.grade-D {
+  background: #ffe9a8;
+  color: #755700;
+}
+
+.grade-F {
+  background: #ffdede;
+  color: #9d1717;
+}
+
+.remark {
+  font-size: 8px;
+}
+
+.grand-total-row td,
+.percentage-row td {
+  background: #0d5817;
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.grand-total-row td:last-child,
+.percentage-row td:last-child {
+  color: #f6d64d;
+  font-size: 13px;
+}
+
+.grade-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 12px;
+  border-top: 1px solid #cce0cc;
+  border-bottom: 1px solid #cce0cc;
+  font-size: 9px;
+}
+
+.grade-scale span {
+  border: 1px solid #b8d4ba;
+  border-radius: 12px;
+  padding: 3px 7px;
+}
+
+.comments-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px;
+}
+
+.comment-box {
+  border: 1px solid #c7dfc8;
+  border-radius: 7px;
+  min-height: 90px;
+  padding: 8px;
+}
+
+.comment-box h4 {
+  font-size: 9px;
+  margin: 0 0 8px;
+  color: #0d5817;
+}
+
+.comment-box p {
+  font-size: 10px;
+  min-height: 35px;
+  margin: 0;
+  font-style: italic;
+}
+
+.comment-box textarea {
+  width: 100%;
+  min-height: 45px;
+  resize: vertical;
+  border: 1px solid #c8dfc9;
+  border-radius: 5px;
+  padding: 6px;
+  font-size: 10px;
+  box-sizing: border-box;
+}
+
+.signature-line {
+  margin-top: 10px;
+  padding-top: 5px;
+  border-top: 1px dashed #bbb;
+  font-size: 8px;
+}
+
+.promotion-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid #c7dfc8;
+  padding: 8px 12px;
+  font-size: 9px;
+}
+
+.promotion-row > div {
+  flex: 1;
+}
+
+.promotion-row input {
+  border: 0;
+  border-bottom: 1px solid #aaa;
+  outline: none;
+  margin-left: 5px;
+  font-size: 9px;
+}
+
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+  background: #f4faf3;
+}
+
+.save-report-button {
+  background: #0d5817;
+  color: white;
+  border: 0;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.save-report-button:hover {
+  background: #084410;
+}
+
+.save-report-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.report-message {
+  margin: 10px;
+  padding: 10px;
+  background: #e8f7ea;
+  color: #145c1d;
+  border: 1px solid #b8dabb;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.report-loading {
+  padding: 50px;
+  text-align: center;
+}
+
+/* --------------------------------------
+   Mobile
+-------------------------------------- */
+
+@media (max-width: 768px) {
+  .report-header {
+    grid-template-columns: 60px 1fr 80px;
+    gap: 7px;
+  }
+
+  .school-logo-box img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .school-information h1 {
+    font-size: 10px;
+  }
+
+  .arabic-school-name {
+    font-size: 9px;
+  }
+
+  .student-information-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .comments-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .promotion-row {
+    flex-direction: column;
+  }
+
+  .report-table {
+    min-width: 750px;
+  }
+}
+
+/* --------------------------------------
+   Printing
+-------------------------------------- */
+
+@media print {
+  body {
+    background: #fff !important;
+  }
+
+  .report-wrapper {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+    border: none;
+  }
+
+  .report-actions {
+    display: none;
+  }
+
+  .report-message {
+    display: none;
+  }
+
+  .score-input {
+    border: none;
+  }
+
+  .report-table {
+    font-size: 9px;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+}

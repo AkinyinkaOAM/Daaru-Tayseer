@@ -1,27 +1,48 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { adminAPI } from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 import { FaUserShield, FaTrash, FaCheckCircle, FaEnvelope } from 'react-icons/fa';
 
 const ROLES = [
-  { value: 'admin', label: 'Admin / Teacher' },
+  { value: 'admin', label: 'Teacher' },
   { value: 'super_admin', label: 'Super Admin' },
   { value: 'super_super_admin', label: 'Super Super Admin' },
 ];
+
+const CLASSES = [
+  'الروضة Kindergarten',
+  'التمهيدي Preparatory',
+  'الحضانة Nursery',
+  'Arobiyyah 1 الفصل الأول',
+  'Arobiyyah 2 الفصل الثانى',
+  'Arobiyyah 3 الفصل الثالث',
+  'Class Four الفصل الرابعة',
+];
+
+// Manage Admins is staff-only: parents/students never appear here, and a
+// super_admin viewer may only see/manage admin (teacher) accounts.
+const STAFF_ROLES = ['admin', 'super_admin', 'super_super_admin'];
+const filterVisibleAdmins = (list, viewerRole) => {
+  const staffOnly = list.filter((u) => STAFF_ROLES.includes(u.role));
+  return viewerRole === 'super_admin'
+    ? staffOnly.filter((u) => u.role === 'admin')
+    : staffOnly;
+};
 
 export default function ManageAdmins() {
   const { user } = useAuth();
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState('');
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm();
+  const selectedRole = useWatch({ control, name: 'role' });
 
   const fetchAdmins = async () => {
     setLoading(true);
     try {
       const { data } = await adminAPI.getAll();
-      setAdmins(data.data || []);
+      setAdmins(filterVisibleAdmins(data.data || [], user?.role));
     } catch {
       setAdmins([]);
     } finally {
@@ -39,7 +60,7 @@ export default function ManageAdmins() {
       setLoading(true);
       try {
         const { data } = await adminAPI.getAll();
-        if (isMounted) setAdmins(data.data || []);
+        if (isMounted) setAdmins(filterVisibleAdmins(data.data || [], user?.role));
       } catch {
         if (isMounted) setAdmins([]);
       } finally {
@@ -52,7 +73,7 @@ export default function ManageAdmins() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [user?.role]);
 
   const onSubmit = async (formData) => {
     try {
@@ -87,6 +108,15 @@ export default function ManageAdmins() {
     }
   };
 
+  const handleGradeChange = async (id, assignedGrade) => {
+    try {
+      await adminAPI.update(id, { assignedGrade });
+      fetchAdmins();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update assigned class');
+    }
+  };
+
   const handleResendInvitation = async (id, email) => {
     if (!window.confirm(`Send a new temporary password to "${email}"?`)) return;
     try {
@@ -99,6 +129,15 @@ export default function ManageAdmins() {
   };
 
   const canManageRoles = user?.role === 'super_super_admin';
+  const canManageGrade = ['super_admin', 'super_super_admin'].includes(user?.role);
+
+  // A class can only be assigned to one teacher at a time.
+  const assignedGrades = new Set(
+    admins.filter((a) => a.role === 'admin' && a.assignedGrade).map((a) => a.assignedGrade)
+  );
+  const availableClassesForCreate = CLASSES.filter((c) => !assignedGrades.has(c));
+  const availableClassesForRow = (currentGrade) =>
+    CLASSES.filter((c) => !assignedGrades.has(c) || c === currentGrade);
 
   return (
     <>
@@ -146,13 +185,30 @@ export default function ManageAdmins() {
                 >
                   <option value="">Select role</option>
                   {ROLES.map((r) => {
-                    // Only super_super_admin can create other super_super_admins
+                    // super_admin can only create admin/teacher accounts; only
+                    // super_super_admin can create other super_super_admins.
                     if (r.value === 'super_super_admin' && !canManageRoles) return null;
+                    if (r.value === 'super_admin' && user?.role !== 'super_super_admin') return null;
                     return <option key={r.value} value={r.value}>{r.label}</option>;
                   })}
                 </select>
                 {errors.role && <div className="invalid-feedback">{errors.role.message}</div>}
               </div>
+              {selectedRole === 'admin' && (
+                <div className="col-md-6">
+                  <select
+                    {...register('assignedGrade', { required: 'Assigned class is required for a teacher' })}
+                    className={`form-select form-select-sm ${errors.assignedGrade ? 'is-invalid' : ''}`}
+                  >
+                    <option value="">Select assigned class</option>
+                    {availableClassesForCreate.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  {errors.assignedGrade && <div className="invalid-feedback">{errors.assignedGrade.message}</div>}
+                  {availableClassesForCreate.length === 0 && (
+                    <div className="form-text text-warning">All classes already have a teacher assigned.</div>
+                  )}
+                </div>
+              )}
               <div className="col-md-2">
                 <button
                   type="submit"
@@ -183,6 +239,7 @@ export default function ManageAdmins() {
                     <th>Email</th>
                     <th>Role</th>
                     {canManageRoles && <th>Change Role</th>}
+                    {canManageGrade && <th>Assigned Class</th>}
                     <th>Created</th>
                     <th className="text-center">Actions</th>
                   </tr>
@@ -208,6 +265,23 @@ export default function ManageAdmins() {
                               <option key={r.value} value={r.value}>{r.label}</option>
                             ))}
                           </select>
+                        </td>
+                      )}
+                      {canManageGrade && (
+                        <td>
+                          {a.role === 'admin' ? (
+                            <select
+                              className="form-select form-select-sm"
+                              value={a.assignedGrade || ''}
+                              onChange={(e) => handleGradeChange(a._id, e.target.value)}
+                              style={{ width: 'auto' }}
+                            >
+                              <option value="">Not assigned</option>
+                              {availableClassesForRow(a.assignedGrade).map((c) => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                          ) : (
+                            <span className="text-muted">—</span>
+                          )}
                         </td>
                       )}
                       <td className="text-muted">

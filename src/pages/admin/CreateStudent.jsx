@@ -1,34 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import api, { studentsAPI } from '../../services/api';
+import { studentsAPI } from '../../services/api';
+import { useAuth } from '../../context/useAuth';
 import { FaCheckCircle } from 'react-icons/fa';
 
 const CLASSES = [
-  'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
-  'JSS 1', 'JSS 2', 'JSS 3',
-  'SSS 1', 'SSS 2', 'SSS 3',
-  'Hifdh 1', 'Hifdh 2', 'Hifdh 3',
+  'الروضة Kindergarten',
+  'التمهيدي Preparatory',
+  'الحضانة Nursery',
+  'Arobiyyah 1 الفصل الأول',
+  'Arobiyyah 2 الفصل الثانى',
+  'Arobiyyah 3 الفصل الثالث',
+  'Class Four الفصل الرابعة',
 ];
 
 export default function CreateStudent() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isTeacher = user?.role === 'admin';
   const [success, setSuccess] = useState(false);
+  const [createdStudent, setCreatedStudent] = useState(null);
   const [serverError, setServerError] = useState('');
-  const [courses, setCourses] = useState([]);
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-
-  useEffect(() => {
-    const loadCourses = async () => {
-      try {
-        const { data } = await api.get('/courses');
-        setCourses(data.data || []);
-      } catch {
-        setCourses([]);
-      }
-    };
-    loadCourses();
-  }, []);
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
+    defaultValues: { grade: isTeacher ? user?.assignedGrade || '' : '' },
+  });
 
   const onSubmit = async (formData) => {
     setServerError('');
@@ -36,7 +32,6 @@ export default function CreateStudent() {
       const payload = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        admissionNumber: formData.admissionNumber,
         dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
         grade: formData.grade,
@@ -44,11 +39,9 @@ export default function CreateStudent() {
         parentEmail: formData.parentEmail,
         parentPhone: formData.parentPhone,
         parentAddress: formData.parentAddress,
-        feePaid: Number(formData.feePaid || 0),
-        feeBalance: Number(formData.feeBalance || 0),
-        courses: formData.courses || [],
       };
-      await studentsAPI.create(payload);
+      const { data } = await studentsAPI.create(payload);
+      setCreatedStudent(data.data?.student || null);
       setSuccess(true);
       reset();
     } catch (err) {
@@ -61,6 +54,11 @@ export default function CreateStudent() {
       <div className="text-center py-5">
         <FaCheckCircle size={56} className="text-success mb-3" />
         <h5>Student Created Successfully!</h5>
+        {createdStudent?.admissionNumber && (
+          <p className="text-muted">
+            Admission Number: <strong>{createdStudent.admissionNumber}</strong>
+          </p>
+        )}
         <p className="text-muted">You can add another student or go back to the list.</p>
         <div className="d-flex gap-2 justify-content-center">
           <button className="btn btn-success rounded-pill" onClick={() => setSuccess(false)}>
@@ -112,26 +110,21 @@ export default function CreateStudent() {
               </div>
 
               <div className="col-md-4">
-                <label className="form-label small fw-bold">Admission Number <span className="text-danger">*</span></label>
-                <input
-                  {...register('admissionNumber', { required: 'Admission number is required' })}
-                  className={`form-control ${errors.admissionNumber ? 'is-invalid' : ''}`}
-                  placeholder="e.g. DTS001"
-                />
-                {errors.admissionNumber && <div className="invalid-feedback">{errors.admissionNumber.message}</div>}
-              </div>
-
-              <div className="col-md-4">
                 <label className="form-label small fw-bold">Class <span className="text-danger">*</span></label>
-                <select
-                  {...register('grade', { required: 'Class is required' })}
-                  className={`form-select ${errors.grade ? 'is-invalid' : ''}`}
-                >
-                  <option value="">Select class</option>
-                  {CLASSES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
+                {isTeacher ? (
+                  <input className="form-control" value={user?.assignedGrade || ''} disabled />
+                ) : (
+                  <select
+                    {...register('grade', { required: 'Class is required' })}
+                    className={`form-select ${errors.grade ? 'is-invalid' : ''}`}
+                  >
+                    <option value="">Select class</option>
+                    {CLASSES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                )}
+                {isTeacher && <input type="hidden" {...register('grade', { required: 'Class is required' })} />}
                 {errors.grade && <div className="invalid-feedback">{errors.grade.message}</div>}
               </div>
 
@@ -169,26 +162,8 @@ export default function CreateStudent() {
                 <input {...register('parentAddress')} className="form-control" placeholder="Address" />
               </div>
 
-              <div className="col-md-6">
-                <label className="form-label small fw-bold">Fee Paid</label>
-                <input type="number" {...register('feePaid')} className="form-control" defaultValue={0} />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label small fw-bold">Fee Balance</label>
-                <input type="number" {...register('feeBalance')} className="form-control" defaultValue={0} />
-              </div>
-
-              <div className="col-md-12">
-                <label className="form-label small fw-bold">Register Courses</label>
-                <select {...register('courses')} className="form-select" multiple size="5">
-                  {courses.map((course) => (
-                    <option key={course._id} value={course._id}>{course.name}</option>
-                  ))}
-                </select>
-                <div className="form-text">Hold Ctrl/Cmd to select multiple subjects.</div>
-              </div>
             </div>
+            <p className="form-text mt-2">Subjects are assigned automatically based on the selected class. The admission number is generated automatically.</p>
 
             <hr />
             <button

@@ -31,8 +31,15 @@ import ContactMessages from './pages/admin/ContactMessages'
 import AcademicRecordsManage from './pages/admin/AcademicRecordsManage'
 import PaymentsManage from './pages/admin/PaymentsManage'
 import Broadsheet from './pages/admin/Broadsheet'
+import ReportCards from './pages/admin/ReportCards'
 import UsersManage from './pages/admin/UsersManage'
 import AuditLogs from './pages/admin/AuditLogs'
+import Teachers from './pages/admin/Teachers'
+import TeacherDetail from './pages/admin/TeacherDetail'
+import Classes from './pages/admin/Classes'
+import ClassStudents from './pages/admin/ClassStudents'
+import StudentDetail from './pages/admin/StudentDetail'
+import TermSettings from './pages/admin/TermSettings'
 import StudentPortal from './pages/StudentPortal'
 import './App.css'
 
@@ -68,7 +75,12 @@ function App() {
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/students/create" element={<CreateStudent />} />
           <Route path="/admin/students" element={<Students />} />
-          <Route path="/admin/scores" element={<Scores />} />
+          <Route path="/admin/students/:id" element={<StudentDetail />} />
+          <Route path="/admin/teachers" element={<Teachers />} />
+          <Route path="/admin/teachers/:id" element={<TeacherDetail />} />
+          <Route path="/admin/classes" element={<Classes />} />
+          <Route path="/admin/classes/:grade" element={<ClassStudents />} />
+          <Route path="/admin/term-settings" element={<TermSettings />} />
           <Route path="/admin/admissions" element={<AdmissionsManage />} />
           <Route path="/admin/news-events" element={<NewsEventsManage />} />
           <Route path="/admin/downloads" element={<DownloadsManage />} />
@@ -76,6 +88,13 @@ function App() {
           <Route path="/admin/academic-records" element={<AcademicRecordsManage />} />
           <Route path="/admin/payments" element={<PaymentsManage />} />
           <Route path="/admin/broadsheet" element={<Broadsheet />} />
+          <Route path="/admin/report-cards" element={<ReportCards />} />
+        </Route>
+      </Route>
+
+      <Route element={<PrivateRoute roles={['admin']} />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/scores" element={<Scores />} />
         </Route>
       </Route>
 

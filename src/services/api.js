@@ -41,6 +41,7 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
   updatePassword: (data) => api.put('/auth/update-password', data),
+  verifyPassword: (password) => api.post('/auth/verify-password', { password }),
 };
 
 /* ─── Students ─── */
@@ -50,6 +51,7 @@ export const studentsAPI = {
   create: (data) => api.post('/students', data),
   update: (id, data) => api.put(`/students/${id}`, data),
   delete: (id, password) => api.delete(`/students/${id}`, { data: { password } }),
+  getGradeStats: () => api.get('/students/stats/grades'),
 };
 
 /* ─── Scores ─── */
@@ -86,7 +88,11 @@ export const paymentsAPI = {
 
 /* ─── Reports ─── */
 export const reportsAPI = {
+  getStudentReport: (studentId, session, term) =>
+    api.get(`/reports/student/${studentId}`, { params: { session, term } }),
+  saveStudentReport: (studentId, data) => api.put(`/reports/student/${studentId}`, data),
   getBroadsheet: (params) => api.get('/reports/broadsheet', { params }),
+  getBroadsheetOptions: (params) => api.get('/reports/broadsheet/options', { params }),
   exportBroadsheetCsv: (params) => api.get('/reports/broadsheet/csv', { params, responseType: 'blob' }),
   exportPaymentsCsv: (params) => api.get('/reports/payments/csv', { params, responseType: 'blob' }),
 };
@@ -142,10 +148,17 @@ export const downloadsAPI = {
 /* ─── Admin ─── */
 export const adminAPI = {
   getAll: (params) => api.get('/users', { params }),
+  getById: (id) => api.get(`/users/${id}`),
   create: (data) => api.post('/users', data),
   resendInvitation: (id) => api.post(`/users/${id}/resend-invitation`),
   update: (id, data) => api.put(`/users/${id}`, data),
   updateRole: (id, role) => api.put(`/users/${id}`, { role }),
   delete: (id, password) => api.delete(`/users/${id}`, { data: { password } }),
+};
+
+/* ─── Settings (Term / Session) ─── */
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (data) => api.put('/settings', data),
 };
 
